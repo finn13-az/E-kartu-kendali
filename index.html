@@ -3,45 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Kartu Kendali BBM Multi-Kendaraan - UPTD Pengelolaan Persampahan Wilayah IV</title>
+    <title>E-Kartu Kendali BBM Auto-Date - UPTD Pengelolaan Persampahan Wilayah IV</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- JSBarcode for Barcode Generation -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <!-- QRCode.js for QR Code Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Html5-QRCode Library for Live Camera Scanning -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
         @media print {
             .no-print { display: none !important; }
             .print-only { display: block !important; }
             body { background: white; }
-            .card-shadow { box-shadow: none !important; border: 1px solid #cbd5e1; }
         }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen">
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-12">
 
     <!-- Header Navigation -->
-    <header class="bg-blue-900 text-white shadow-lg no-print">
+    <header class="bg-blue-900 text-white shadow-md no-print">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center flex-wrap gap-4">
             <div class="flex items-center space-x-3">
-                <div class="bg-blue-700 p-2.5 rounded-lg">
+                <div class="bg-blue-700 p-2.5 rounded-xl shadow-sm">
                     <i class="fa-solid fa-truck-monster text-2xl text-yellow-400"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg leading-tight">E-KARTU KENDALI BBM</h1>
-                    <p class="text-xs text-blue-200">UPTD Pengelolaan Persampahan Wilayah IV - Dinas Lingkungan Hidup</p>
+                    <h1 class="font-extrabold text-lg tracking-wide uppercase">E-KARTU KENDALI BBM INTERNAL</h1>
+                    <p class="text-xs text-blue-200">UPTD Pengelolaan Persampahan Wilayah IV - Dinas Lingkungan Hidup Kab. Bekasi</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
-                <button onclick="openFormModal()" class="bg-green-600 hover:bg-green-700 text-white font-medium text-sm px-4 py-2 rounded-lg transition flex items-center gap-2 shadow">
+                <button onclick="openScannerModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold text-xs px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-md">
+                    <i class="fa-solid fa-camera text-sm"></i> SCAN BARCODE DRIVER
+                </button>
+                <button onclick="openFormModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow">
                     <i class="fa-solid fa-plus-circle"></i> Input Transaksi
                 </button>
-                <button onclick="openConfigModal()" class="bg-blue-700 hover:bg-blue-800 text-white font-medium text-sm px-3 py-2 rounded-lg transition flex items-center gap-1.5" title="Pengaturan Database Web App">
-                    <i class="fa-solid fa-database"></i> Connect DB
-                </button>
-                <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-800 text-white font-medium text-sm px-4 py-2 rounded-lg transition flex items-center gap-2">
+                <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow">
                     <i class="fa-solid fa-print"></i> Cetak Kartu
                 </button>
             </div>
@@ -51,106 +56,151 @@
     <!-- Main Container -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
-        <!-- Vehicle Selector & Profile Card -->
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 no-print space-y-6">
-            
-            <!-- Selector Dropdown Bar -->
-            <div class="flex items-center justify-between bg-blue-50/70 p-4 rounded-xl border border-blue-100 flex-wrap gap-4">
-                <div class="flex items-center space-x-3">
-                    <i class="fa-solid fa-car-side text-blue-900 text-xl"></i>
-                    <div>
-                        <label for="vehicleSelect" class="block text-xs font-bold text-blue-900 uppercase tracking-wide">PILIH ARMADA KENDARAAN</label>
-                        <p class="text-xs text-slate-500">Pilih Plat Nomor untuk melihat & mengelola E-Kartu Kendali</p>
-                    </div>
+        <!-- Vehicle Selector Dropdown -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between flex-wrap gap-4 no-print">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-100 p-2.5 rounded-lg text-blue-900">
+                    <i class="fa-solid fa-car-side text-xl"></i>
                 </div>
-                <div class="flex items-center gap-3">
-                    <select id="vehicleSelect" onchange="changeVehicle()" class="text-sm font-bold text-blue-900 bg-white border-2 border-blue-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm cursor-pointer">
-                        <!-- Options generated dynamically -->
-                    </select>
+                <div>
+                    <label for="vehicleSelect" class="block text-xs font-extrabold text-slate-800 uppercase tracking-wider">PILIH ARMADA KENDARAAN</label>
+                    <p class="text-xs text-slate-500">Pilih armada atau gunakan kamera pemindai (Scan Kamera) Barcode milik pengemudi</p>
                 </div>
             </div>
-
-            <!-- Profile Info Kendaraan -->
-            <div class="flex justify-between items-start border-b border-slate-100 pb-4 flex-wrap gap-2">
-                <div>
-                    <span id="p-jenis" class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded">Dump Truck</span>
-                    <h2 id="p-nopol" class="text-2xl font-bold text-slate-900 mt-1.5">B 9239 FOQ</h2>
-                </div>
-                <div class="text-right">
-                    <span class="text-xs text-slate-600 bg-slate-100 px-3.5 py-1.5 rounded-full font-medium block">Periode: OKTOBER 2026</span>
-                    <span id="dbStatusBadge" class="text-[11px] bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded font-mono mt-1.5 inline-block">
-                        <i class="fa-solid fa-hard-drive mr-1"></i>DB: Local Storage
-                    </span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-                <div>
-                    <p class="text-slate-500 text-xs">Driver / Pengemudi</p>
-                    <p id="p-driver" class="font-semibold text-slate-800 text-base">RAHMAT HIDAYAT</p>
-                </div>
-                <div>
-                    <p class="text-slate-500 text-xs">No SPBU Mitra</p>
-                    <p id="p-spbu" class="font-semibold text-slate-800 text-base">34-17523</p>
-                </div>
-                <div>
-                    <p class="text-slate-500 text-xs">Kapasitas Tangki</p>
-                    <p id="p-kapasitas" class="font-semibold text-slate-800 text-base">80 Liter</p>
-                </div>
-                <div>
-                    <p class="text-slate-500 text-xs">Status Kendaraan</p>
-                    <p class="font-semibold text-emerald-600 text-base flex items-center gap-1">
-                        <i class="fa-solid fa-circle-check text-xs"></i> Operasional
-                    </p>
-                </div>
-            </div>
-
-            <!-- Metrics Bar -->
-            <div class="grid grid-cols-3 gap-4 pt-4 border-t border-slate-100">
-                <div class="bg-slate-50 p-3.5 rounded-lg text-center border border-slate-100">
-                    <p class="text-xs text-slate-500">Total Pengisian</p>
-                    <p id="stat-total-liter" class="text-xl font-bold text-blue-900 mt-0.5">0 L</p>
-                </div>
-                <div class="bg-slate-50 p-3.5 rounded-lg text-center border border-slate-100">
-                    <p class="text-xs text-slate-500">Total Biaya</p>
-                    <p id="stat-total-rupiah" class="text-xl font-bold text-emerald-600 mt-0.5">Rp 0</p>
-                </div>
-                <div class="bg-slate-50 p-3.5 rounded-lg text-center border border-slate-100">
-                    <p class="text-xs text-slate-500">Jumlah Transaksi</p>
-                    <p id="stat-count" class="text-xl font-bold text-amber-600 mt-0.5">0 Kali</p>
-                </div>
+            <div class="flex items-center gap-2">
+                <select id="vehicleSelect" onchange="changeVehicle()" class="text-sm font-bold text-blue-900 bg-blue-50/50 border-2 border-blue-800 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
+                    <!-- Dynamic Options -->
+                </select>
+                <button onclick="openScannerModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs px-3 py-2.5 rounded-lg transition flex items-center gap-1.5 shadow" title="Buka Pemindai Kamera">
+                    <i class="fa-solid fa-expand text-sm"></i> Scan HP Driver
+                </button>
             </div>
         </div>
 
-        <!-- Official Print Header (Only appears on print) -->
+        <!-- DIGITAL IDENTIFICATION CARD & SCAN BARCODE DISPLAY -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 no-print">
+            
+            <!-- Custom Digital ID Card UPTD -->
+            <div class="md:col-span-1 bg-gradient-to-br from-blue-900 via-blue-950 to-slate-900 text-white p-6 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden border border-blue-800">
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/10 rounded-full blur-xl"></div>
+                <div class="absolute -left-10 -top-10 w-32 h-32 bg-yellow-500/10 rounded-full blur-xl"></div>
+
+                <div>
+                    <div class="flex justify-between items-center border-b border-white/20 pb-3 mb-4">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-id-card text-yellow-400"></i>
+                            <span class="text-xs font-bold uppercase tracking-wider">KARTU DIPEGAN GD. PENGEMUDI</span>
+                        </div>
+                        <span class="text-[10px] bg-emerald-500 text-white font-bold px-2 py-0.5 rounded-full uppercase">Aktif</span>
+                    </div>
+
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <p class="text-[11px] text-blue-200 font-medium">Nomor Polisi Kendaraan</p>
+                            <h2 id="card-nopol" class="text-2xl font-black tracking-widest text-white">B 4007 FZV</h2>
+                        </div>
+                        <span id="auto-period-badge" class="text-[10px] bg-blue-800 text-blue-100 font-semibold px-2.5 py-1 rounded-lg border border-blue-700">
+                            <!-- Automated Month Year -->
+                        </span>
+                    </div>
+
+                    <div class="space-y-2 text-xs mt-3">
+                        <div class="flex justify-between">
+                            <span class="text-blue-200">Pengemudi:</span>
+                            <span id="card-driver" class="font-bold">AEP SAEPUDIN</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-blue-200">Jenis Armada:</span>
+                            <span id="card-jenis" class="font-semibold">Armroll Truck</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-blue-200">No SPBU Mitra:</span>
+                            <span id="card-spbu" class="font-semibold">34-17523</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-blue-200">Kapasitas Tangki:</span>
+                            <span id="card-kapasitas" class="font-semibold">80 Liter</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-3 border-t border-white/20 flex justify-between items-center text-[10px] text-slate-300">
+                    <span>UPTD PERSAMPAHAN WIL. IV</span>
+                    <span class="font-mono">DLH KAB. BEKASI</span>
+                </div>
+            </div>
+
+            <!-- Barcode & QR Code Display Box -->
+            <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between items-center text-center">
+                <div class="w-full">
+                    <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide inline-block mb-2">
+                        <i class="fa-solid fa-barcode mr-1"></i> Barcode Kartu Pengemudi
+                    </span>
+                    <h3 class="text-sm font-semibold text-slate-700">Tunjukkan Kode Barcode/QR Ini ke Petugas untuk Discan Saat Pengisian</h3>
+                </div>
+
+                <!-- Dual Code Display -->
+                <div class="my-4 flex flex-col sm:flex-row items-center justify-center gap-6 w-full">
+                    <!-- Standard 1D Barcode (Code128) -->
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center shadow-inner w-full sm:w-auto">
+                        <svg id="barcode1d" class="w-full max-w-[240px]"></svg>
+                        <span class="text-[10px] text-slate-500 mt-1 font-mono">CODE128 BARCODE DRIVER</span>
+                    </div>
+
+                    <!-- Internal QR Code 2D -->
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center shadow-inner">
+                        <div id="qrcode2d" class="p-1 bg-white rounded shadow-sm"></div>
+                        <span class="text-[10px] text-slate-500 mt-2 font-mono">QR KODE ARMADA DRIVER</span>
+                    </div>
+                </div>
+
+                <div class="w-full grid grid-cols-3 gap-3 pt-3 border-t border-slate-100 text-center">
+                    <div class="bg-slate-50 p-2.5 rounded-lg">
+                        <p class="text-[10px] text-slate-500">Total Liter</p>
+                        <p id="stat-total-liter" class="text-base font-extrabold text-blue-900">0 L</p>
+                    </div>
+                    <div class="bg-slate-50 p-2.5 rounded-lg">
+                        <p class="text-[10px] text-slate-500">Total Biaya</p>
+                        <p id="stat-total-rupiah" class="text-base font-extrabold text-emerald-600">Rp 0</p>
+                    </div>
+                    <div class="bg-slate-50 p-2.5 rounded-lg">
+                        <p class="text-[10px] text-slate-500">Transaksi</p>
+                        <p id="stat-count" class="text-base font-extrabold text-amber-600">0 Kali</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Print Header (Automated Month & Year) -->
         <div class="hidden print-only mb-6 text-center border-b-2 border-slate-900 pb-4">
-            <h1 class="text-xl font-bold uppercase tracking-wide">Kartu Kendali Pengisian BBM</h1>
+            <h1 class="text-xl font-bold uppercase tracking-wide">Kartu Kendali Barcode Pengisian BBM</h1>
             <h2 class="text-md font-semibold text-slate-700">UPTD PENGELOLAAN PERSAMPAHAN WILAYAH IV</h2>
             <h3 class="text-sm font-medium text-slate-600">DINAS LINGKUNGAN HIDUP KABUPATEN BEKASI</h3>
             <div class="grid grid-cols-2 gap-4 mt-4 text-left text-xs border-t pt-2">
                 <div>
                     <p><strong>NO SPBU:</strong> <span id="pr-spbu">34-17523</span></p>
-                    <p><strong>NAMA PENGEMUDI:</strong> <span id="pr-driver">RAHMAT HIDAYAT</span></p>
-                    <p><strong>NO POLISI:</strong> <span id="pr-nopol">B 9239 FOQ</span></p>
+                    <p><strong>NAMA PENGEMUDI:</strong> <span id="pr-driver">AEP SAEPUDIN</span></p>
+                    <p><strong>NO POLISI:</strong> <span id="pr-nopol">B 4007 FZV</span></p>
                 </div>
                 <div>
-                    <p><strong>JENIS KENDARAAN:</strong> <span id="pr-jenis">DUMP TRUCK</span></p>
-                    <p><strong>BULAN:</strong> JANUARI 2026</p>
+                    <p><strong>JENIS KENDARAAN:</strong> <span id="pr-jenis">Armroll Truck</span></p>
+                    <p><strong>PERIODE:</strong> <span id="pr-bulan-tahun" class="uppercase font-bold"></span></p>
                     <p><strong>KAPASITAS TANGKI:</strong> <span id="pr-kapasitas">80 LITER</span></p>
                 </div>
             </div>
         </div>
 
-        <!-- Table Card / Data Display -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden card-shadow">
+        <!-- Tabel Riwayat Pengisian BBM -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center flex-wrap gap-2 no-print">
-                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
                     <i class="fa-solid fa-list-check text-blue-700"></i> Riwayat Pengisian BBM Realtime
                 </h3>
                 <div class="flex items-center gap-2">
                     <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari tanggal..." class="text-xs px-3 py-1.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button onclick="resetToDefaultData()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-2.5 py-1.5 rounded-lg transition flex items-center gap-1" title="Reset Data Sample">
-                        <i class="fa-solid fa-rotate-left"></i> Reset DB
+                    <button onclick="resetToDefaultData()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-2.5 py-1.5 rounded-lg transition" title="Reset DB">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
                     </button>
                     <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1">
                         <i class="fa-solid fa-file-excel"></i> Export CSV
@@ -158,58 +208,85 @@
                 </div>
             </div>
 
-            <!-- Table -->
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-slate-700" id="kendaliTable">
-                    <thead class="text-xs uppercase bg-blue-900 text-white border-b border-blue-900">
+                    <thead class="text-xs uppercase bg-blue-900 text-white border-b">
                         <tr>
                             <th class="px-4 py-3.5 text-center">NO</th>
                             <th class="px-4 py-3.5 text-center">TANGGAL</th>
-                            <th class="px-4 py-3.5 text-right">KAPASITAS TANGKI</th>
+                            <th class="px-4 py-3.5 text-right">KAPASITAS</th>
                             <th class="px-4 py-3.5 text-right">JUMLAH PENGISIAN</th>
                             <th class="px-4 py-3.5 text-right">NILAI RUPIAH</th>
-                            <th class="px-4 py-3.5 text-center">TANDA TANGAN PENGEMUDI</th>
-                            <th class="px-4 py-3.5 text-center">TANDA TANGAN PENGAWAS SPBU</th>
+                            <th class="px-4 py-3.5 text-center">STATUS BARCODE</th>
+                            <th class="px-4 py-3.5 text-center">VERIFIKASI PENGAWAS</th>
                             <th class="px-4 py-3.5 text-center no-print">AKSI</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody" class="divide-y divide-slate-200">
-                        <!-- Dynamic Data Rows -->
+                        <!-- Dynamic Rows -->
                     </tbody>
                     <tfoot class="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-300">
                         <tr>
                             <td colspan="3" class="px-4 py-3 text-center">TOTAL JUMLAH</td>
                             <td id="foot-total-liter" class="px-4 py-3 text-right text-blue-900">0 Liter</td>
                             <td id="foot-total-rupiah" class="px-4 py-3 text-right text-emerald-700">Rp 0</td>
-                            <td colspan="3" class="px-4 py-3 text-center text-xs text-slate-500">Verified & Auto-Synced with Database Storage</td>
+                            <td colspan="3" class="px-4 py-3 text-center text-xs text-slate-500">Verified & Auto-Synced with Internal Database</td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
         </div>
 
-        <!-- Signature Area for Official Printout -->
+        <!-- Signature Print -->
         <div class="hidden print-only mt-8 grid grid-cols-2 gap-8 text-center text-xs">
             <div>
-                <p class="mb-12">Pengemudi Dump Truck,</p>
-                <p id="pr-sign-driver" class="font-bold underline">RAHMAT HIDAYAT</p>
+                <p class="mb-12">Pengemudi Armada Kendaraan,</p>
+                <p id="pr-sign-driver" class="font-bold underline">AEP SAEPUDIN</p>
                 <p>NIP/ID. Driver Operasional</p>
             </div>
             <div>
                 <p class="mb-12">Pengawas SPBU / Koordinator UPTD,</p>
                 <p class="font-bold underline">( .................................................... )</p>
-                <p>SPBU No. 34-17523</p>
+                <p>SPBU Mitra No. 34-17523</p>
             </div>
         </div>
 
     </main>
 
-    <!-- Modal Form Input Transaksi -->
+    <!-- MODAL CAMERA BARCODE / QR SCANNER -->
+    <div id="scannerModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex justify-center items-center p-4 z-50 hidden no-print">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden flex flex-col">
+            <div class="bg-amber-500 px-5 py-4 text-slate-900 flex justify-between items-center">
+                <h3 class="font-extrabold text-md flex items-center gap-2">
+                    <i class="fa-solid fa-camera"></i> Pemindai Kamera (Scan Barcode Driver)
+                </h3>
+                <button onclick="closeScannerModal()" class="text-slate-900 hover:text-slate-700 text-xl font-bold">&times;</button>
+            </div>
+            
+            <div class="p-5 flex flex-col items-center justify-center space-y-4">
+                <p class="text-xs text-slate-600 text-center">Arahkan kamera ke **Barcode garis / QR Code** pada HP atau kartu fisik pengemudi</p>
+                
+                <!-- Live Camera Viewfinder -->
+                <div id="reader" class="w-full max-w-xs bg-slate-900 rounded-xl overflow-hidden border-2 border-amber-500 shadow-inner"></div>
+
+                <!-- Scan Result Badge -->
+                <div id="scanResultBadge" class="hidden w-full bg-emerald-50 border border-emerald-200 p-3 rounded-lg text-center">
+                    <p class="text-xs text-emerald-800 font-bold" id="scanTextMsg">Barcode Berhasil Terbaca!</p>
+                </div>
+
+                <div class="pt-2 w-full flex justify-end">
+                    <button type="button" onclick="closeScannerModal()" class="w-full py-2.5 text-xs font-bold text-slate-700 bg-slate-200 hover:bg-slate-300 rounded-xl transition">Tutup Kamera</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form Input Transaksi (Auto-filled Today's Date) -->
     <div id="formModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-4 z-50 hidden no-print">
-        <div class="bg-white rounded-xl shadow-xl max-w-md w-full overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
             <div class="bg-blue-900 px-5 py-4 text-white flex justify-between items-center">
-                <h3 class="font-bold text-md flex items-center gap-2"><i class="fa-solid fa-gas-pump text-yellow-400"></i> Input Transaksi BBM Baru</h3>
-                <button onclick="closeFormModal()" class="text-blue-200 hover:text-white text-lg">&times;</button>
+                <h3 class="font-bold text-md flex items-center gap-2"><i class="fa-solid fa-barcode text-yellow-400"></i> Input Transaksi BBM Armada</h3>
+                <button onclick="closeFormModal()" class="text-white hover:text-blue-200 text-lg">&times;</button>
             </div>
             <form id="inputForm" onsubmit="handleFormSubmit(event)" class="p-5 space-y-4">
                 <div>
@@ -217,8 +294,8 @@
                     <input type="text" id="inputNopolModal" readonly class="w-full text-sm font-bold px-3 py-2 bg-slate-100 border border-slate-300 rounded-lg text-blue-900">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Pengisian</label>
-                    <input type="date" id="inputTanggal" required class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Pengisian (Otomatis Hari Ini)</label>
+                    <input type="date" id="inputTanggal" required class="w-full text-sm font-bold px-3 py-2 border border-blue-400 bg-blue-50/30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -235,74 +312,62 @@
                     <input type="number" id="inputRupiah" value="204000" min="1000" required class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Status Verifikasi Struk/Paraf</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Status Verifikasi Transaksi</label>
                     <select id="inputStatus" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
                         <option value="Verified">Lengkap (Terverifikasi)</option>
-                        <option value="Pending">Menunggu Verifikasi Struk</option>
+                        <option value="Pending">Menunggu Verifikasi</option>
                     </select>
                 </div>
                 <div class="pt-2 flex justify-end space-x-2">
                     <button type="button" onclick="closeFormModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg">Batal</button>
-                    <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-blue-900 hover:bg-blue-800 rounded-lg shadow">Simpan Ke Database</button>
+                    <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-blue-900 hover:bg-blue-800 rounded-lg shadow">Simpan Transaksi</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Database Config (Apps Script / API) -->
-    <div id="configModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-4 z-50 hidden no-print">
-        <div class="bg-white rounded-xl shadow-xl max-w-lg w-full overflow-hidden">
-            <div class="bg-blue-900 px-5 py-4 text-white flex justify-between items-center">
-                <h3 class="font-bold text-md flex items-center gap-2"><i class="fa-solid fa-cloud-arrow-up text-yellow-400"></i> Pengaturan Database Google Sheets</h3>
-                <button onclick="closeConfigModal()" class="text-blue-200 hover:text-white text-lg">&times;</button>
-            </div>
-            <div class="p-5 space-y-4">
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    Aplikasi ini menggunakan <strong>LocalStorage Browser Database</strong> bawaan. Jika ingin mengkoneksikan langsung ke <strong>Google Sheets secara Online</strong>, tempel URL Web App Google Apps Script Anda di bawah:
-                </p>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Google Apps Script Web App URL</label>
-                    <input type="url" id="appScriptUrl" placeholder="https://script.google.com/macros/s/.../exec" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-mono">
-                </div>
-                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs space-y-1">
-                    <p class="font-bold text-slate-700">Petunjuk Kode Google Apps Script (Code.gs):</p>
-                    <pre class="bg-slate-900 text-green-400 p-2 rounded text-[10px] overflow-x-auto">
-function doGet() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = sheet.getDataRange().getValues();
-  return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
-}
-                    </pre>
-                </div>
-                <div class="pt-2 flex justify-end space-x-2">
-                    <button type="button" onclick="closeConfigModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg">Batal</button>
-                    <button type="button" onclick="saveDbConfig()" class="px-4 py-2 text-xs font-semibold text-white bg-blue-900 hover:bg-blue-800 rounded-lg shadow">Hubungkan API Sheets</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript Application & Multi-Vehicle Database Logic -->
+    <!-- JavaScript Automation Logic -->
     <script>
-        // Database List of Vehicles requested by user
+        // Data Kendaraan Internal UPTD
         const vehiclesList = [
-            { nopol: "B 4007 FTA", driver: "IMRON ROSADI", jenis: "BAKTOR", spbu: "34-17523", kapasitas: 80 },
-            { nopol: "B 9022 FMA", driver: "MAHFUD", jenis: "TANGKI AIR", spbu: "34-17523", kapasitas: 80 },
-            { nopol: "B 9079 FTA", driver: "BAMBANG", jenis: "PATROLI", spbu: "34-17523", kapasitas: 80 },
-            { nopol: "B 9014 FTA", driver: "SUDENI", jenis: "PICK UP", spbu: "34-17523", kapasitas: 80 },
-            { nopol: "B 9067 FTA", driver: "JALI ALPIAN", jenis: "Dump Truck", spbu: "34-17523", kapasitas: 80 }
+            { nopol: "B 4007 FZV", driver: "IMRON ROSADI", jenis: "BAKTOR", spbu: "34-17523", kapasitas: 80, code: "UPTD4-B4007FZV-80L" },
+            { nopol: "B 9022 FMA", driver: "MAHFUDZ", jenis: "TRUCK TANGKI AIR", spbu: "34-17523", kapasitas: 80, code: "UPTD4-B9022FMA-80L" },
+            { nopol: "B 9014 FTA", driver: "SUDENI", jenis: "PICK UP", spbu: "34-17523", kapasitas: 80, code: "UPTD4-B9014FTA-80L" },
+            { nopol: "B 9079 FTA", driver: "BAMBANG", jenis: "PATROLI", spbu: "34-17523", kapasitas: 80, code: "UPTD4-B9079FTA-80L" },
+            { nopol: "B 9067 FTA", driver: "JALI ALPIAN", jenis: "PATROLI", spbu: "34-17523", kapasitas: 80, code: "UPTD4-B9067FTA-80L" }
         ];
 
-        const STORAGE_KEY = "EKENDALI_MULTI_VEHICLE_DB_V2";
-        const CONFIG_KEY = "EKENDALI_SHEETS_API_URL";
-
-        let currentNopol = "B 9239 FOQ";
+        const STORAGE_KEY = "UPTD4_E_KENDALI_AUTO_DATE_DB_V1";
+        let currentNopol = "B 4007 FZV";
         let allVehiclesData = {};
+        let html5QrCodeScanner = null;
+
+        // Helper Function to Get YYYY-MM-DD
+        function getTodayYYYYMMDD() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Helper Function to Get Current Month & Year Name (e.g., "September 2026")
+        function getCurrentMonthYearName() {
+            const options = { month: 'long', year: 'numeric' };
+            return new Date().toLocaleDateString('id-ID', options);
+        }
 
         document.addEventListener("DOMContentLoaded", function() {
             initVehicleSelector();
             initDatabase();
+            applyAutomatedDateHeader();
         });
+
+        function applyAutomatedDateHeader() {
+            const currentPeriod = getCurrentMonthYearName();
+            document.getElementById("auto-period-badge").innerText = currentPeriod;
+            document.getElementById("pr-bulan-tahun").innerText = currentPeriod;
+        }
 
         function initVehicleSelector() {
             const select = document.getElementById("vehicleSelect");
@@ -327,12 +392,10 @@ function doGet() {
                 generateDefaultAllData();
             }
 
-            // Ensure all vehicles exist in DB
             vehiclesList.forEach(v => {
                 if (!allVehiclesData[v.nopol]) {
                     allVehiclesData[v.nopol] = [
-                        { id: Date.now() + 1, tanggal: "2026-01-01", kapasitas: v.kapasitas, liter: 30, rupiah: 204000, ttdDriver: "Digital Signed", ttdPengawas: "Verified" },
-                        { id: Date.now() + 2, tanggal: "2026-01-02", kapasitas: v.kapasitas, liter: 30, rupiah: 204000, ttdDriver: "Digital Signed", ttdPengawas: "Verified" }
+                        { id: Date.now() + 1, tanggal: getTodayYYYYMMDD(), kapasitas: v.kapasitas, liter: 30, rupiah: 204000, ttdDriver: "Scanned", ttdPengawas: "Verified" }
                     ];
                 }
             });
@@ -343,11 +406,10 @@ function doGet() {
 
         function generateDefaultAllData() {
             allVehiclesData = {};
+            const todayStr = getTodayYYYYMMDD();
             vehiclesList.forEach((v, idx) => {
                 allVehiclesData[v.nopol] = [
-                    { id: 1000 + idx * 10 + 1, tanggal: "2026-01-01", kapasitas: v.kapasitas, liter: 30, rupiah: 204000, ttdDriver: "Digital Signed", ttdPengawas: "Verified" },
-                    { id: 1000 + idx * 10 + 2, tanggal: "2026-01-02", kapasitas: v.kapasitas, liter: 30, rupiah: 204000, ttdDriver: "Digital Signed", ttdPengawas: "Verified" },
-                    { id: 1000 + idx * 10 + 3, tanggal: "2026-01-03", kapasitas: v.kapasitas, liter: 30, rupiah: 204000, ttdDriver: "Digital Signed", ttdPengawas: "Verified" }
+                    { id: 4000 + idx * 10 + 1, tanggal: todayStr, kapasitas: v.kapasitas, liter: 30, rupiah: 204000, ttdDriver: "Scanned", ttdPengawas: "Verified" }
                 ];
             });
         }
@@ -364,12 +426,12 @@ function doGet() {
         function updateVehicleProfile() {
             const vInfo = vehiclesList.find(v => v.nopol === currentNopol) || vehiclesList[0];
             
-            // Web Profile Update
-            document.getElementById("p-nopol").innerText = vInfo.nopol;
-            document.getElementById("p-driver").innerText = vInfo.driver;
-            document.getElementById("p-jenis").innerText = vInfo.jenis;
-            document.getElementById("p-spbu").innerText = vInfo.spbu;
-            document.getElementById("p-kapasitas").innerText = vInfo.kapasitas + " Liter";
+            // Web Card Info Update
+            document.getElementById("card-nopol").innerText = vInfo.nopol;
+            document.getElementById("card-driver").innerText = vInfo.driver;
+            document.getElementById("card-jenis").innerText = vInfo.jenis;
+            document.getElementById("card-spbu").innerText = vInfo.spbu;
+            document.getElementById("card-kapasitas").innerText = vInfo.kapasitas + " Liter";
 
             // Print Profile Update
             document.getElementById("pr-nopol").innerText = vInfo.nopol;
@@ -379,7 +441,100 @@ function doGet() {
             document.getElementById("pr-spbu").innerText = vInfo.spbu;
             document.getElementById("pr-kapasitas").innerText = vInfo.kapasitas + " LITER";
 
+            // Render Standard 1D Barcode (Code128)
+            JsBarcode("#barcode1d", vInfo.code, {
+                format: "CODE128",
+                lineColor: "#1e293b",
+                width: 1.8,
+                height: 55,
+                displayValue: true,
+                fontSize: 12,
+                fontOptions: "bold"
+            });
+
+            // Render Internal QR Code
+            const qrContainer = document.getElementById("qrcode2d");
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, {
+                text: `INTERNAL_ID:${vInfo.nopol}|DRIVER:${vInfo.driver}|SPBU:${vInfo.spbu}`,
+                width: 100,
+                height: 100,
+                colorDark : "#0f172a",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
             renderTable();
+        }
+
+        // Camera Scanner Open / Close Logic
+        function openScannerModal() {
+            document.getElementById("scannerModal").classList.remove("hidden");
+            document.getElementById("scanResultBadge").classList.add("hidden");
+
+            if (!html5QrCodeScanner) {
+                html5QrCodeScanner = new Html5Qrcode("reader");
+            }
+
+            const config = { fps: 10, qrbox: { width: 220, height: 180 } };
+            html5QrCodeScanner.start(
+                { facingMode: "environment" }, 
+                config, 
+                onScanSuccess, 
+                onScanFailure
+            ).catch(err => {
+                console.error("Gagal membuka kamera:", err);
+                alert("Kamera tidak dapat diakses atau izin ditolak.");
+            });
+        }
+
+        function closeScannerModal() {
+            if (html5QrCodeScanner) {
+                html5QrCodeScanner.stop().then(() => {
+                    document.getElementById("scannerModal").classList.add("hidden");
+                }).catch(err => {
+                    document.getElementById("scannerModal").classList.add("hidden");
+                });
+            } else {
+                document.getElementById("scannerModal").classList.add("hidden");
+            }
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            let foundVehicle = vehiclesList.find(v => 
+                decodedText.includes(v.nopol) || decodedText.includes(v.code) || v.nopol.replace(/\s+/g, '') === decodedText.replace(/\s+/g, '')
+            );
+
+            const badge = document.getElementById("scanResultBadge");
+            const msg = document.getElementById("scanTextMsg");
+
+            if (foundVehicle) {
+                badge.className = "w-full bg-emerald-50 border border-emerald-300 p-3 rounded-lg text-center shadow";
+                msg.innerText = `BERHASIL DISCAN: ${foundVehicle.nopol} - ${foundVehicle.driver}`;
+                badge.classList.remove("hidden");
+
+                currentNopol = foundVehicle.nopol;
+                document.getElementById("vehicleSelect").value = currentNopol;
+                updateVehicleProfile();
+
+                setTimeout(() => {
+                    closeScannerModal();
+                    openFormModal(); 
+                }, 1200);
+            } else {
+                badge.className = "w-full bg-amber-50 border border-amber-300 p-3 rounded-lg text-center shadow";
+                msg.innerText = `Kode Terbaca: "${decodedText}". (Membuka Form Transaksi)`;
+                badge.classList.remove("hidden");
+
+                setTimeout(() => {
+                    closeScannerModal();
+                    openFormModal();
+                }, 1500);
+            }
+        }
+
+        function onScanFailure(error) {
+            // Quiet fail during live scanning
         }
 
         function formatRupiah(number) {
@@ -414,13 +569,13 @@ function doGet() {
                     <td class="px-4 py-3 text-right font-mono font-bold text-blue-900">${item.liter} Liter</td>
                     <td class="px-4 py-3 text-right font-mono font-bold text-emerald-700">${formatRupiah(item.rupiah)}</td>
                     <td class="px-4 py-3 text-center text-xs">
-                        <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-full font-medium inline-flex items-center gap-1">
-                            <i class="fa-solid fa-check-double text-[10px]"></i> ${item.ttdDriver}
+                        <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-full font-semibold inline-flex items-center gap-1">
+                            <i class="fa-solid fa-barcode text-[10px]"></i> ${item.ttdDriver}
                         </span>
                     </td>
                     <td class="px-4 py-3 text-center text-xs">
-                        <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-full font-medium inline-flex items-center gap-1">
-                            <i class="fa-solid fa-user-check text-[10px]"></i> ${item.ttdPengawas}
+                        <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-full font-medium inline-flex items-center gap-1">
+                            <i class="fa-solid fa-square-check text-[10px]"></i> ${item.ttdPengawas}
                         </span>
                     </td>
                     <td class="px-4 py-3 text-center no-print">
@@ -441,22 +596,16 @@ function doGet() {
             document.getElementById("foot-total-rupiah").innerText = formatRupiah(totalRupiah);
         }
 
+        // Open Modal with AUTOMATED Today's Date
         function openFormModal() {
             document.getElementById("inputNopolModal").value = currentNopol;
-            document.getElementById("inputTanggal").valueAsDate = new Date();
+            // AUTOMATION: Automatically set to current real-time date (YYYY-MM-DD)
+            document.getElementById("inputTanggal").value = getTodayYYYYMMDD();
             document.getElementById("formModal").classList.remove("hidden");
         }
 
         function closeFormModal() {
             document.getElementById("formModal").classList.add("hidden");
-        }
-
-        function openConfigModal() {
-            document.getElementById("configModal").classList.remove("hidden");
-        }
-
-        function closeConfigModal() {
-            document.getElementById("configModal").classList.add("hidden");
         }
 
         function handleFormSubmit(e) {
@@ -474,7 +623,7 @@ function doGet() {
                 kapasitas: vInfo.kapasitas,
                 liter: liter,
                 rupiah: rupiah,
-                ttdDriver: "Digital Signed",
+                ttdDriver: "Scanned",
                 ttdPengawas: status
             };
 
@@ -491,7 +640,7 @@ function doGet() {
         }
 
         function deleteItem(id) {
-            if (confirm(`Apakah Anda yakin ingin menghapus catatan ini untuk armada ${currentNopol}?`)) {
+            if (confirm(`Hapus catatan transaksi ini untuk armada ${currentNopol}?`)) {
                 allVehiclesData[currentNopol] = allVehiclesData[currentNopol].filter(item => item.id !== id);
                 saveToLocalStorage();
                 renderTable();
@@ -499,7 +648,7 @@ function doGet() {
         }
 
         function resetToDefaultData() {
-            if (confirm("Reset seluruh data armada ke sampel standar awal?")) {
+            if (confirm("Reset seluruh data ke sampel standar awal?")) {
                 generateDefaultAllData();
                 saveToLocalStorage();
                 renderTable();
@@ -517,7 +666,7 @@ function doGet() {
 
         function exportToCSV() {
             let csv = `Armada: ${currentNopol}
-No,Tanggal,Kapasitas Tangki (L),Jumlah Pengisian (L),Nilai Rupiah (Rp),TTD Driver,TTD Pengawas
+No,Tanggal,Kapasitas Tangki (L),Jumlah Pengisian (L),Nilai Rupiah (Rp),Status Barcode,TTD Pengawas
 `;
             const kendaliData = allVehiclesData[currentNopol] || [];
             kendaliData.forEach((item, index) => {
@@ -528,7 +677,7 @@ No,Tanggal,Kapasitas Tangki (L),Jumlah Pengisian (L),Nilai Rupiah (Rp),TTD Drive
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.setAttribute('href', url);
-            a.setAttribute('download', `E_Kartu_Kendali_${currentNopol.replace(/\s+/g, '_')}_Januari_2026.csv`);
+            a.setAttribute('download', `E_Kartu_Kendali_Barcode_${currentNopol.replace(/\s+/g, '_')}_${getTodayYYYYMMDD()}.csv`);
             a.click();
         }
     </script>
