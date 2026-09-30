@@ -8,8 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- QR Code Generator JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -53,64 +51,56 @@
     <!-- Main Container -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
-        <!-- Top Dashboard Metrics & QR Code Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 no-print">
-            <!-- Profile Kendaraan & SPBU -->
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 col-span-1 lg:col-span-2 flex flex-col justify-between">
+        <!-- Profile Kendaraan & SPBU (Full Width, Barcode/QR Code Removed) -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 no-print">
+            <div class="flex justify-between items-start border-b border-slate-100 pb-4 mb-4 flex-wrap gap-2">
                 <div>
-                    <div class="flex justify-between items-start border-b border-slate-100 pb-3 mb-4">
-                        <div>
-                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">BAKTOR</span>
-                            <h2 class="text-xl font-bold text-slate-900 mt-1">B 4007 FZV</h2>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full font-medium block">Periode: OKTOBER 2026</span>
-                            <span id="dbStatusBadge" class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-mono mt-1 inline-block">
-                                <i class="fa-solid fa-hard-drive mr-1"></i>DB: Local Storage
-                            </span>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
-                        <div>
-                            <p class="text-slate-500 text-xs">Driver / Pengemudi</p>
-                            <p class="font-semibold text-slate-800">IMRON</p>
-                        </div>
-                        <div>
-                            <p class="text-slate-500 text-xs">No SPBU Mitra</p>
-                            <p class="font-semibold text-slate-800">34-17523</p>
-                        </div>
-                        <div>
-                            <p class="text-slate-500 text-xs">Kapasitas Tangki</p>
-                            <p class="font-semibold text-slate-800">80 Liter</p>
-                        </div>
-                    </div>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded">Dump Truck</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-1.5">B 9239 FOQ</h2>
                 </div>
-
-                <!-- Metrics -->
-                <div class="grid grid-cols-3 gap-3 mt-5 pt-4 border-t border-slate-100">
-                    <div class="bg-slate-50 p-3 rounded-lg text-center">
-                        <p class="text-xs text-slate-500">Total Pengisian</p>
-                        <p id="stat-total-liter" class="text-lg font-bold text-blue-900">0 L</p>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-lg text-center">
-                        <p class="text-xs text-slate-500">Total Biaya</p>
-                        <p id="stat-total-rupiah" class="text-lg font-bold text-emerald-600">Rp 0</p>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-lg text-center">
-                        <p class="text-xs text-slate-500">Jumlah Transaksi</p>
-                        <p id="stat-count" class="text-lg font-bold text-amber-600">0 Kali</p>
-                    </div>
+                <div class="text-right">
+                    <span class="text-xs text-slate-600 bg-slate-100 px-3.5 py-1.5 rounded-full font-medium block">Periode: Januari 2026</span>
+                    <span id="dbStatusBadge" class="text-[11px] bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded font-mono mt-1.5 inline-block">
+                        <i class="fa-solid fa-hard-drive mr-1"></i>DB: Local Storage
+                    </span>
                 </div>
             </div>
 
-            <!-- QR Code Card -->
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center text-center">
-                <h3 class="font-bold text-slate-800 text-sm mb-1">SCAN E-KENDALI SPBU</h3>
-                <p class="text-xs text-slate-500 mb-3">Scan via HP untuk mengisi form online</p>
-                <div id="qrcode" class="p-2 bg-white border border-slate-200 rounded-lg shadow-inner mb-2"></div>
-                <span class="text-[11px] text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full font-mono mt-1">
-                    <i class="fa-solid fa-link mr-1"></i>Terintegrasi Live Database
-                </span>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm mb-6">
+                <div>
+                    <p class="text-slate-500 text-xs">Driver / Pengemudi</p>
+                    <p class="font-semibold text-slate-800 text-base">RAHMAT HIDAYAT</p>
+                </div>
+                <div>
+                    <p class="text-slate-500 text-xs">No SPBU Mitra</p>
+                    <p class="font-semibold text-slate-800 text-base">34-17523</p>
+                </div>
+                <div>
+                    <p class="text-slate-500 text-xs">Kapasitas Tangki</p>
+                    <p class="font-semibold text-slate-800 text-base">80 Liter</p>
+                </div>
+                <div>
+                    <p class="text-slate-500 text-xs">Status Kendaraan</p>
+                    <p class="font-semibold text-emerald-600 text-base flex items-center gap-1">
+                        <i class="fa-solid fa-circle-check text-xs"></i> Operasional
+                    </p>
+                </div>
+            </div>
+
+            <!-- Metrics Bar -->
+            <div class="grid grid-cols-3 gap-4 pt-4 border-t border-slate-100">
+                <div class="bg-slate-50 p-3.5 rounded-lg text-center border border-slate-100">
+                    <p class="text-xs text-slate-500">Total Pengisian</p>
+                    <p id="stat-total-liter" class="text-xl font-bold text-blue-900 mt-0.5">0 L</p>
+                </div>
+                <div class="bg-slate-50 p-3.5 rounded-lg text-center border border-slate-100">
+                    <p class="text-xs text-slate-500">Total Biaya</p>
+                    <p id="stat-total-rupiah" class="text-xl font-bold text-emerald-600 mt-0.5">Rp 0</p>
+                </div>
+                <div class="bg-slate-50 p-3.5 rounded-lg text-center border border-slate-100">
+                    <p class="text-xs text-slate-500">Jumlah Transaksi</p>
+                    <p id="stat-count" class="text-xl font-bold text-amber-600 mt-0.5">0 Kali</p>
+                </div>
             </div>
         </div>
 
@@ -122,12 +112,12 @@
             <div class="grid grid-cols-2 gap-4 mt-4 text-left text-xs border-t pt-2">
                 <div>
                     <p><strong>NO SPBU:</strong> 34-17523</p>
-                    <p><strong>NAMA PENGEMUDI:</strong> IMRON</p>
-                    <p><strong>NO POLISI:</strong> B 4007 FZV</p>
+                    <p><strong>NAMA PENGEMUDI:</strong> RAHMAT HIDAYAT</p>
+                    <p><strong>NO POLISI:</strong> B 9239 FOQ</p>
                 </div>
                 <div>
                     <p><strong>JENIS KENDARAAN:</strong> DUMP TRUCK</p>
-                    <p><strong>BULAN:</strong> OKTOBER 2026</p>
+                    <p><strong>BULAN:</strong> JANUARI 2026</p>
                     <p><strong>KAPASITAS TANGKI:</strong> 80 LITER</p>
                 </div>
             </div>
@@ -184,8 +174,8 @@
         <div class="hidden print-only mt-8 grid grid-cols-2 gap-8 text-center text-xs">
             <div>
                 <p class="mb-12">Pengemudi Dump Truck,</p>
-                <p class="font-bold underline">IMRON</p>
-                <p>NIP/ID. 202601-B4007</p>
+                <p class="font-bold underline">RAHMAT HIDAYAT</p>
+                <p>NIP/ID. 202601-B9239</p>
             </div>
             <div>
                 <p class="mb-12">Pengawas SPBU / Koordinator UPTD,</p>
@@ -288,7 +278,6 @@ function doGet() {
 
         document.addEventListener("DOMContentLoaded", function() {
             initDatabase();
-            generateQRCode();
         });
 
         // Initialize LocalStorage DB
@@ -310,7 +299,7 @@ function doGet() {
             if (sheetsUrl) {
                 document.getElementById("appScriptUrl").value = sheetsUrl;
                 document.getElementById("dbStatusBadge").innerHTML = '<i class="fa-solid fa-cloud text-emerald-600 mr-1"></i>DB: Cloud Sheets';
-                document.getElementById("dbStatusBadge").className = "text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono mt-1 inline-block";
+                document.getElementById("dbStatusBadge").className = "text-[11px] bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded font-mono mt-1.5 inline-block";
             }
 
             renderTable();
@@ -326,20 +315,6 @@ function doGet() {
                 saveToLocalStorage();
                 renderTable();
             }
-        }
-
-        function generateQRCode() {
-            const sheetsUrl = localStorage.getItem(CONFIG_KEY) || "https://docs.google.com/forms/d/e/1FAIpQLS_EKendali_BBM_UPTD4/viewform";
-            const qrContainer = document.getElementById("qrcode");
-            qrContainer.innerHTML = "";
-            new QRCode(qrContainer, {
-                text: sheetsUrl,
-                width: 120,
-                height: 120,
-                colorDark : "#1e3a8a",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
         }
 
         function formatRupiah(number) {
@@ -427,7 +402,6 @@ function doGet() {
             }
             closeConfigModal();
             initDatabase();
-            generateQRCode();
         }
 
         function handleFormSubmit(e) {
